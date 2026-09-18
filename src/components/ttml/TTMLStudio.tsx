@@ -3,8 +3,14 @@ import { LyricLine, TrackInfo, AppMode } from './types';
 import { generateTTML, generateLRC, generateSRT, downloadFile, formatTime, generateId, shiftLineTime, shiftAllTimes, parseTimeToSeconds } from './utils';
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer';
 import { useUndoRedo } from './useUndoRedo';
+import type { Lyric } from '../../types';
 
-export default function TTMLStudio() {
+interface TTMLStudioProps {
+  onSave?: (lines: LyricLine[], title: string, artist: string, album: string) => void;
+  initialData?: Lyric | null;
+}
+
+export default function TTMLStudio({ onSave, initialData }: TTMLStudioProps) {
   const [mode, setMode] = useState<AppMode>('edit');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -45,6 +51,28 @@ export default function TTMLStudio() {
   useEffect(() => { currentTimeRef.current = currentTime; }, [currentTime]);
   useEffect(() => { currentSyncLineRef.current = currentSyncLine; }, [currentSyncLine]);
   useEffect(() => { linesRef.current = lines; }, [lines]);
+
+  // Load initial data if provided
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.syncedData && initialData.syncedData.length > 0) {
+        setLines(initialData.syncedData);
+      } else if (initialData.rawText) {
+        const parsedLines = initialData.rawText.split('\n').map(text => ({
+          id: generateId(),
+          text,
+          startTime: null,
+          endTime: null,
+        }));
+        setLines(parsedLines);
+      }
+      setTrackInfo({
+        title: initialData.trackTitle || '',
+        artist: initialData.artistName || '',
+        album: initialData.albumName || '',
+      });
+    }
+  }, [initialData]);
 
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -481,6 +509,16 @@ export default function TTMLStudio() {
           </button>
         </div>
 
+        {onSave && (
+          <button 
+            onClick={() => onSave(lines, trackInfo.title, trackInfo.artist, trackInfo.album)} 
+            className="cosmic-btn cosmic-btn-primary px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Сохранить
+          </button>
+        )}
+        
         <button onClick={() => setShowExport(true)} className="cosmic-btn px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Скачать

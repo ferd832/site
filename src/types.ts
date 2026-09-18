@@ -104,6 +104,28 @@ export interface Release {
   updatedAt: string;
 }
 
+// Lyric for TTML Studio
+export interface LyricLine {
+  id: string;
+  text: string;
+  startTime: number | null;
+  endTime: number | null;
+}
+
+export interface Lyric {
+  id: string;
+  trackTitle?: string;
+  artistName?: string;
+  albumName?: string;
+  rawText?: string;
+  syncedData?: LyricLine[];
+  format: string;
+  status: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // User profile
 export type UserRole = 'admin' | 'moderator' | 'artist';
 

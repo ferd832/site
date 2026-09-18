@@ -13,7 +13,16 @@ import ProfilePage from './pages/ProfilePage';
 import SupportPage from './pages/SupportPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useData();
+  const { isAuthenticated, isLoading } = useData();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 animate-spin-slow" />
+      </div>
+    );
+  }
+  
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
