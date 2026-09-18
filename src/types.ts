@@ -4,14 +4,21 @@
 export type ReleaseStatus = 'draft' | 'shipped' | 'accepted' | 'rejected' | 'withdrawn';
 export type ReleaseType = 'single' | 'ep' | 'album';
 
-// Content rating sliders (0-100)
+// Content rating toggles (0 or 100)
 export interface ContentRating {
-  isCover: number;        // 0-100
-  isInstrumental: number; // 0-100
-  explicitLyrics: number; // 0-100
-  drugReferences: number; // 0-100
-  aiText: number;         // 0-100
-  aiInstrumental: number; // 0-100
+  isCover: number;        // 0 or 100
+  isInstrumental: number; // 0 or 100
+  explicitLyrics: number; // 0 or 100
+  drugReferences: number; // 0 or 100
+  aiText: number;         // 0 or 100
+  aiInstrumental: number; // 0 or 100
+}
+
+// Author (songwriter)
+export interface Author {
+  id: string;
+  fullName: string;
+  role?: string; // composer, lyricist, etc.
 }
 
 // Artist with platform links
@@ -28,13 +35,6 @@ export interface Artist {
     vkMusic?: string;
   };
   createdAt: string;
-}
-
-// Author (songwriter)
-export interface Author {
-  id: string;
-  fullName: string;
-  role?: string; // composer, lyricist, etc.
 }
 
 // Track within a release
@@ -70,6 +70,10 @@ export interface Release {
   contractFile?: string;
   contractFileName?: string;
   
+  // Cover
+  coverFile?: string;
+  coverFileName?: string;
+  
   // Album info
   title: string;
   mainArtists: string[]; // artist IDs
@@ -86,6 +90,7 @@ export interface Release {
   releaseDate?: string;
   originalReleaseDate?: string;
   yandexFutureRelease?: boolean;
+  yandexFutureDate?: string;
   
   // Promo
   artistBio?: string;
@@ -99,40 +104,8 @@ export interface Release {
   updatedAt: string;
 }
 
-// Task
-export interface Task {
-  id: string;
-  releaseId?: string;
-  title: string;
-  description?: string;
-  isCompleted: boolean;
-  dueDate?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  createdAt: string;
-}
-
-// Lyric (for TTML Studio standalone)
-export interface LyricLine {
-  id: string;
-  text: string;
-  startTime: number | null;
-  endTime: number | null;
-}
-
-export interface Lyric {
-  id: string;
-  trackId?: string;
-  rawText?: string;
-  syncedData?: LyricLine[];
-  format: string;
-  status: 'draft' | 'syncing' | 'ready' | 'published';
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // User profile
-export type UserRole = 'admin' | 'manager' | 'artist' | 'editor' | 'viewer';
+export type UserRole = 'admin' | 'moderator' | 'artist';
 
 export interface UserProfile {
   id: string;
@@ -162,8 +135,6 @@ export const RELEASE_TYPE_LABELS: Record<ReleaseType, Record<Language, string>> 
 
 export const ROLE_LABELS: Record<UserRole, Record<Language, string>> = {
   admin: { en: 'Administrator', ru: 'Администратор' },
-  manager: { en: 'Manager', ru: 'Руководитель' },
+  moderator: { en: 'Moderator', ru: 'Модератор' },
   artist: { en: 'Artist', ru: 'Исполнитель' },
-  editor: { en: 'Editor', ru: 'Редактор' },
-  viewer: { en: 'Viewer', ru: 'Наблюдатель' },
 };

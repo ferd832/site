@@ -235,6 +235,19 @@ body {
   animation: spin-slow 8s linear infinite;
 }
 
+@keyframes pulse-cosmic {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+  }
+}
+
+.animate-pulse-cosmic {
+  animation: pulse-cosmic 2s ease-in-out infinite;
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }

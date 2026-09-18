@@ -1,22 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useI18n } from '../context/I18nContext';
 import { ROLE_LABELS } from '../types';
 import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
-  const { profile, updateProfile, releases, tasks } = useData();
+  const { profile, updateProfile, releases } = useData();
   const { t, lang } = useI18n();
   const [fullName, setFullName] = useState(profile.fullName || '');
   const [position, setPosition] = useState(profile.position || '');
 
+  useEffect(() => {
+    setFullName(profile.fullName || '');
+    setPosition(profile.position || '');
+  }, [profile]);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile({ fullName, position: position || undefined });
+    updateProfile({ fullName, position });
     toast.success(t('Profile updated', 'Профиль обновлён'));
   };
-
-  const completedTasks = tasks.filter(t => t.isCompleted).length;
 
   return (
     <div className="space-y-6 max-w-3xl animate-slide-up">
@@ -39,31 +42,41 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="text-center p-4 rounded-xl bg-white/3 border border-white/5">
             <p className="text-2xl font-bold text-white">{releases.length}</p>
             <p className="text-xs text-purple-300/50 mt-1">{t('Releases', 'Отгрузки')}</p>
           </div>
           <div className="text-center p-4 rounded-xl bg-white/3 border border-white/5">
-            <p className="text-2xl font-bold text-white">{completedTasks}</p>
-            <p className="text-xs text-purple-300/50 mt-1">{t('Completed', 'Выполнено')}</p>
-          </div>
-          <div className="text-center p-4 rounded-xl bg-white/3 border border-white/5">
-            <p className="text-2xl font-bold text-white">{tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0}%</p>
-            <p className="text-xs text-purple-300/50 mt-1">{t('Progress', 'Прогресс')}</p>
+            <p className="text-2xl font-bold text-white">{ROLE_LABELS[profile.role][lang]}</p>
+            <p className="text-xs text-purple-300/50 mt-1">{t('Role', 'Роль')}</p>
           </div>
         </div>
 
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-purple-200/80 mb-2">{t('Full Name', 'Полное имя')}</label>
-            <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="cosmic-input" />
+            <input
+              type="text"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              className="cosmic-input"
+              placeholder={t('Enter your name', 'Введите ваше имя')}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-purple-200/80 mb-2">{t('Position', 'Должность')}</label>
-            <input type="text" value={position} onChange={e => setPosition(e.target.value)} className="cosmic-input" />
+            <input
+              type="text"
+              value={position}
+              onChange={e => setPosition(e.target.value)}
+              className="cosmic-input"
+              placeholder={t('Enter your position', 'Введите вашу должность')}
+            />
           </div>
-          <button type="submit" className="cosmic-btn cosmic-btn-primary">{t('Save Changes', 'Сохранить изменения')}</button>
+          <button type="submit" className="cosmic-btn cosmic-btn-primary">
+            {t('Save Changes', 'Сохранить изменения')}
+          </button>
         </form>
       </div>
     </div>

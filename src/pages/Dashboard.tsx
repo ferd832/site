@@ -3,9 +3,8 @@ import { useI18n } from '../context/I18nContext';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const { releases, artists, tasks } = useData();
+  const { releases, artists } = useData();
   const { t } = useI18n();
-  const activeTasks = tasks.filter(t => !t.isCompleted);
   const hasData = releases.length > 0 || artists.length > 0;
 
   if (!hasData) {
@@ -36,7 +35,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-slide-up">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="glass-card p-5 bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/20">
           <p className="text-3xl font-bold text-white">{releases.length}</p>
           <p className="text-sm text-purple-200/60 mt-1">{t('Releases', 'Отгрузки')}</p>
@@ -45,10 +44,7 @@ export default function Dashboard() {
           <p className="text-3xl font-bold text-white">{artists.length}</p>
           <p className="text-sm text-purple-200/60 mt-1">{t('Artists', 'Исполнители')}</p>
         </div>
-        <div className="glass-card p-5 bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/20">
-          <p className="text-3xl font-bold text-white">{activeTasks.length}</p>
-          <p className="text-sm text-purple-200/60 mt-1">{t('Active Tasks', 'Активные задачи')}</p>
-        </div>
+
       </div>
     </div>
   );

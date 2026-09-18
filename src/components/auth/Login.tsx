@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { useI18n } from '../../context/I18nContext';
+import { ROLE_LABELS } from '../../types';
+import type { UserRole } from '../../types';
 import toast from 'react-hot-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<UserRole>('admin');
   const { login } = useData();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
@@ -17,7 +20,7 @@ export default function Login() {
       toast.error(t('Fill all fields', 'Заполните все поля'));
       return;
     }
-    login(email, password);
+    login(email, password, role);
     toast.success(t('Welcome!', 'Добро пожаловать!'));
     navigate('/dashboard');
   };
@@ -40,6 +43,14 @@ export default function Login() {
             <div>
               <label className="block text-sm font-medium text-purple-200/80 mb-2">{t('Password', 'Пароль')}</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="cosmic-input" placeholder="••••••••" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-purple-200/80 mb-2">{t('Role', 'Роль')}</label>
+              <select value={role} onChange={e => setRole(e.target.value as UserRole)} className="cosmic-select">
+                <option value="admin">{ROLE_LABELS.admin[lang]}</option>
+                <option value="moderator">{ROLE_LABELS.moderator[lang]}</option>
+                <option value="artist">{ROLE_LABELS.artist[lang]}</option>
+              </select>
             </div>
             <button type="submit" className="cosmic-btn cosmic-btn-primary w-full py-3.5">
               {t('Sign In', 'Войти')}

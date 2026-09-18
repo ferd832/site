@@ -8,8 +8,9 @@ import Dashboard from './pages/Dashboard';
 import ReleasesPage from './pages/ReleasesPage';
 import ArtistsPage from './pages/ArtistsPage';
 import LyricsPage from './pages/LyricsPage';
-import TasksPage from './pages/TasksPage';
+import StatisticsPage from './pages/StatisticsPage';
 import ProfilePage from './pages/ProfilePage';
+import SupportPage from './pages/SupportPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useData();
@@ -27,8 +28,9 @@ function AppRoutes() {
         <Route path="releases" element={<ReleasesPage />} />
         <Route path="artists" element={<ArtistsPage />} />
         <Route path="lyrics" element={<LyricsPage />} />
-        <Route path="tasks" element={<TasksPage />} />
+        <Route path="statistics" element={<StatisticsPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="support" element={<SupportPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

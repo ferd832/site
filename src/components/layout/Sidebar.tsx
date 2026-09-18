@@ -5,19 +5,21 @@ import { useState } from 'react';
 
 export default function Sidebar() {
   const location = useLocation();
-  const { logout, tasks } = useData();
+  const { logout, profile } = useData();
   const { t, lang, setLang } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const activeTasks = tasks.filter(t => !t.isCompleted).length;
 
   const menuItems = [
-    { path: '/dashboard', label: t('Dashboard', 'Главная') },
-    { path: '/releases', label: t('Releases', 'Отгрузки') },
-    { path: '/artists', label: t('Artists', 'Исполнители') },
-    { path: '/lyrics', label: t('Lyrics Studio', 'Студия текстов') },
-    { path: '/tasks', label: t('Tasks', 'Задачи') },
-    { path: '/profile', label: t('Profile', 'Профиль') },
+    { path: '/dashboard', label: t('Dashboard', 'Главная'), roles: ['admin', 'moderator', 'artist'] },
+    { path: '/releases', label: t('Releases', 'Отгрузки'), roles: ['admin', 'moderator', 'artist'] },
+    { path: '/artists', label: t('Artists', 'Исполнители'), roles: ['admin', 'moderator', 'artist'] },
+    { path: '/lyrics', label: t('Lyrics Studio', 'Студия текстов'), roles: ['admin', 'moderator', 'artist'] },
+    { path: '/statistics', label: t('Statistics', 'Статистика'), roles: ['admin'] },
+    { path: '/profile', label: t('Profile', 'Профиль'), roles: ['admin', 'moderator', 'artist'] },
+    { path: '/support', label: t('Support', 'Поддержка'), roles: ['admin', 'moderator', 'artist'] },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => item.roles.includes(profile.role));
 
   const sidebarContent = (
     <>
@@ -30,7 +32,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1">
-        {menuItems.map(item => {
+        {filteredMenuItems.map(item => {
           const isActive = location.pathname === item.path;
           return (
             <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
@@ -38,9 +40,6 @@ export default function Sidebar() {
                 isActive ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/10 text-white border border-purple-500/30' : 'text-purple-200/60 hover:text-white hover:bg-white/5'
               }`}>
               <span className="font-medium">{item.label}</span>
-              {item.path === '/tasks' && activeTasks > 0 && (
-                <span className="px-2 py-0.5 text-xs rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">{activeTasks}</span>
-              )}
             </Link>
           );
         })}
