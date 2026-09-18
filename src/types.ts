@@ -1,4 +1,117 @@
-// Существующие типы TTML Studio
+// Types for PLANET MUSIC Label Dashboard
+
+// Release statuses - only 5
+export type ReleaseStatus = 'draft' | 'shipped' | 'accepted' | 'rejected' | 'withdrawn';
+export type ReleaseType = 'single' | 'ep' | 'album';
+
+// Content rating sliders (0-100)
+export interface ContentRating {
+  isCover: number;        // 0-100
+  isInstrumental: number; // 0-100
+  explicitLyrics: number; // 0-100
+  drugReferences: number; // 0-100
+  aiText: number;         // 0-100
+  aiInstrumental: number; // 0-100
+}
+
+// Artist with platform links
+export interface Artist {
+  id: string;
+  name: string;
+  stageName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  platforms: {
+    appleMusic?: string;
+    spotify?: string;
+    yandexMusic?: string;
+    vkMusic?: string;
+  };
+  createdAt: string;
+}
+
+// Author (songwriter)
+export interface Author {
+  id: string;
+  fullName: string;
+  role?: string; // composer, lyricist, etc.
+}
+
+// Track within a release
+export interface Track {
+  id: string;
+  audioFile?: string;
+  audioFileName?: string;
+  fileSize?: number;
+  duration?: number;
+  title: string;
+  version?: string;
+  genre?: string;
+  subgenre?: string;
+  previewStart?: number; // seconds - for TikTok, VK etc.
+  isrc?: string;
+  isrcAssigned?: boolean;
+  contentRating: ContentRating;
+  artists: string[]; // artist IDs
+  authors: Author[];
+  lyrics?: string;
+  lyricsFile?: string; // LRC/TTML file URL
+  lyricsFileName?: string;
+  order: number;
+}
+
+// Release (album/single/EP)
+export interface Release {
+  id: string;
+  type: ReleaseType;
+  status: ReleaseStatus;
+  
+  // Contract
+  contractFile?: string;
+  contractFileName?: string;
+  
+  // Album info
+  title: string;
+  mainArtists: string[]; // artist IDs
+  version?: string;
+  genre?: string;
+  subgenre?: string;
+  label?: string;
+  upc?: string;
+  upcAssigned?: boolean;
+  copyrightNotice?: string; // C-line
+  phonographicCopyright?: string; // P-line
+  
+  // Dates
+  releaseDate?: string;
+  originalReleaseDate?: string;
+  yandexFutureRelease?: boolean;
+  
+  // Promo
+  artistBio?: string;
+  promoLinks?: string[];
+  promoFiles?: string[];
+  
+  // Tracks
+  tracks: Track[];
+  
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Task
+export interface Task {
+  id: string;
+  releaseId?: string;
+  title: string;
+  description?: string;
+  isCompleted: boolean;
+  dueDate?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  createdAt: string;
+}
+
+// Lyric (for TTML Studio standalone)
 export interface LyricLine {
   id: string;
   text: string;
@@ -6,141 +119,51 @@ export interface LyricLine {
   endTime: number | null;
 }
 
-export interface TrackInfo {
-  title: string;
-  artist: string;
-  album: string;
-}
-
-export type AppMode = 'edit' | 'sync' | 'review';
-
-// Новые типы для кабинета лейбла
-export type ReleaseStatus = 'idea' | 'recording' | 'mixing' | 'mastering' | 'artwork' | 'pitching' | 'ready' | 'released' | 'archived';
-export type ReleaseType = 'single' | 'ep' | 'album' | 'compilation';
-export type LyricStatus = 'draft' | 'syncing' | 'ready' | 'published';
-export type UserRole = 'admin' | 'manager' | 'artist' | 'editor' | 'viewer';
-export type AssetType = 'cover' | 'photo' | 'video' | 'logo' | 'press_kit' | 'other';
-
-export interface Artist {
-  id: string;
-  name: string;
-  stage_name?: string;
-  bio?: string;
-  avatar_url?: string;
-  social_links?: Record<string, string>;
-  created_at: string;
-}
-
-export interface Release {
-  id: string;
-  user_id?: string;
-  title: string;
-  artist_id?: string;
-  type: ReleaseType;
-  status: ReleaseStatus;
-  release_date?: string;
-  upc?: string;
-  cover_url?: string;
-  description?: string;
-  metadata?: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Track {
-  id: string;
-  release_id?: string;
-  artist_id?: string;
-  title: string;
-  track_number?: number;
-  duration?: number;
-  bpm?: number;
-  key_signature?: string;
-  genre?: string;
-  mood?: string;
-  isrc?: string;
-  audio_url?: string;
-  file_size?: number;
-  metadata?: Record<string, any>;
-  created_at: string;
-}
-
 export interface Lyric {
   id: string;
-  track_id?: string;
-  user_id?: string;
-  raw_text?: string;
-  synced_data?: LyricLine[];
+  trackId?: string;
+  rawText?: string;
+  syncedData?: LyricLine[];
   format: string;
-  status: LyricStatus;
+  status: 'draft' | 'syncing' | 'ready' | 'published';
   version: number;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Task {
-  id: string;
-  release_id?: string;
-  user_id?: string;
-  title: string;
-  description?: string;
-  is_completed: boolean;
-  due_date?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  created_at: string;
-}
-
-export interface MediaAsset {
-  id: string;
-  user_id?: string;
-  release_id?: string;
-  artist_id?: string;
-  type: AssetType;
-  title?: string;
-  file_url: string;
-  file_size?: number;
-  dimensions?: string;
-  metadata?: Record<string, any>;
-  created_at: string;
-}
+// User profile
+export type UserRole = 'admin' | 'manager' | 'artist' | 'editor' | 'viewer';
 
 export interface UserProfile {
   id: string;
-  full_name?: string;
+  fullName?: string;
   role: UserRole;
-  avatar_url?: string;
   position?: string;
-  created_at: string;
+  createdAt: string;
 }
 
-export const RELEASE_STATUS_LABELS: Record<ReleaseStatus, string> = {
-  idea: '💡 Идея',
-  recording: '🎙 Запись',
-  mixing: '🎚 Сведение',
-  mastering: '🔊 Мастеринг',
-  artwork: '🎨 Обложка',
-  pitching: '📢 Питчинг',
-  ready: '✅ Готов',
-  released: '🚀 Релиз',
-  archived: '📦 Архив',
+// Language
+export type Language = 'en' | 'ru';
+
+// Status labels
+export const RELEASE_STATUS_LABELS: Record<ReleaseStatus, Record<Language, string>> = {
+  draft: { en: 'Draft', ru: 'Черновик' },
+  shipped: { en: 'Shipped', ru: 'Отгружен' },
+  accepted: { en: 'Accepted', ru: 'Принят' },
+  rejected: { en: 'Rejected', ru: 'Отклонён' },
+  withdrawn: { en: 'Withdrawn', ru: 'Снят' },
 };
 
-export const RELEASE_STATUS_COLORS: Record<ReleaseStatus, string> = {
-  idea: 'from-gray-500/20 to-gray-600/20 border-gray-500/30 text-gray-300',
-  recording: 'from-blue-500/20 to-blue-600/20 border-blue-500/30 text-blue-300',
-  mixing: 'from-indigo-500/20 to-indigo-600/20 border-indigo-500/30 text-indigo-300',
-  mastering: 'from-violet-500/20 to-violet-600/20 border-violet-500/30 text-violet-300',
-  artwork: 'from-pink-500/20 to-pink-600/20 border-pink-500/30 text-pink-300',
-  pitching: 'from-orange-500/20 to-orange-600/20 border-orange-500/30 text-orange-300',
-  ready: 'from-green-500/20 to-green-600/20 border-green-500/30 text-green-300',
-  released: 'from-emerald-500/20 to-emerald-600/20 border-emerald-500/30 text-emerald-300',
-  archived: 'from-slate-500/20 to-slate-600/20 border-slate-500/30 text-slate-300',
+export const RELEASE_TYPE_LABELS: Record<ReleaseType, Record<Language, string>> = {
+  single: { en: 'Single', ru: 'Сингл' },
+  ep: { en: 'EP', ru: 'EP' },
+  album: { en: 'Album', ru: 'Альбом' },
 };
 
-export const ROLE_LABELS: Record<UserRole, string> = {
-  admin: 'Администратор',
-  manager: 'Менеджер',
-  artist: 'Артист',
-  editor: 'Редактор',
-  viewer: 'Просмотр',
+export const ROLE_LABELS: Record<UserRole, Record<Language, string>> = {
+  admin: { en: 'Administrator', ru: 'Администратор' },
+  manager: { en: 'Manager', ru: 'Руководитель' },
+  artist: { en: 'Artist', ru: 'Исполнитель' },
+  editor: { en: 'Editor', ru: 'Редактор' },
+  viewer: { en: 'Viewer', ru: 'Наблюдатель' },
 };

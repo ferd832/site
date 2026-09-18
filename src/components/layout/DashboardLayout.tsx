@@ -4,12 +4,13 @@ import TopBar from './TopBar';
 
 export default function DashboardLayout() {
   return (
-    <div className="min-h-screen flex">
-      <div className="stars-bg" />
+    <div className="min-h-screen flex relative z-10">
       <Sidebar />
-      <main className="flex-1 p-8 ml-64 relative z-10">
+      <main className="flex-1 lg:ml-64 p-4 lg:p-8">
         <TopBar />
-        <Outlet />
+        <div className="animate-fade-in">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
