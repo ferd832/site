@@ -30,7 +30,7 @@ export default function ReleasesPage() {
           <h2 className="text-2xl font-bold cosmic-text">{t('Releases', 'Отгрузки')}</h2>
           <p className="text-sm text-purple-300/50 mt-1">{t('Manage your releases', 'Управление отгрузками')}</p>
         </div>
-        <button onClick={() => { setEditingRelease(null); setShowEditor(true); }} className="cosmic-btn cosmic-btn-primary">
+        <button type="button" onClick={() => { setEditingRelease(null); setShowEditor(true); }} className="cosmic-btn cosmic-btn-primary">
           + {t('New Release', 'Новая отгрузка')}
         </button>
       </div>
@@ -53,8 +53,8 @@ export default function ReleasesPage() {
                 <p className="text-xs text-purple-300/50 mb-3">{release.mainArtists.map(getArtistName).join(', ')}</p>
               )}
               <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <button onClick={() => { setEditingRelease(release); setShowEditor(true); }} className="text-xs cosmic-btn py-1 px-2">{t('Edit', 'Изменить')}</button>
-                <button onClick={() => handleDelete(release.id)} className="text-xs cosmic-btn cosmic-btn-ghost py-1 px-2 hover:!border-red-500/30 hover:!text-red-300">{t('Delete', 'Удалить')}</button>
+                <button type="button" onClick={() => { setEditingRelease(release); setShowEditor(true); }} className="text-xs cosmic-btn py-1 px-2">{t('Edit', 'Изменить')}</button>
+                <button type="button" onClick={() => handleDelete(release.id)} className="text-xs cosmic-btn cosmic-btn-ghost py-1 px-2 hover:!border-red-500/30 hover:!text-red-300">{t('Delete', 'Удалить')}</button>
               </div>
             </div>
           ))}
@@ -137,7 +137,7 @@ function ReleaseForm({ release, artists, onSave, onCancel, t, lang }: any) {
       {/* Step Indicator */}
       <div className="flex items-center gap-2 sticky top-0 bg-space-900/95 backdrop-blur-sm py-2 z-10">
         {steps.map((s, i) => (
-          <button key={i} onClick={() => setStep(i + 1)} className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${step === i + 1 ? 'bg-purple-500/20 text-white border border-purple-500/30' : 'bg-white/3 text-purple-300/60 hover:text-white'}`}>
+          <button type="button" key={i} onClick={() => setStep(i + 1)} className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${step === i + 1 ? 'bg-purple-500/20 text-white border border-purple-500/30' : 'bg-white/3 text-purple-300/60 hover:text-white'}`}>
             {i + 1}. {s}
           </button>
         ))}
@@ -166,7 +166,7 @@ function ReleaseForm({ release, artists, onSave, onCancel, t, lang }: any) {
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="text-sm font-medium text-purple-200/80">{t('Tracks', 'Треки')}</label>
-              <button onClick={addTrack} className="cosmic-btn text-sm">+ {t('Add Track', 'Добавить трек')}</button>
+              <button type="button" onClick={addTrack} className="cosmic-btn text-sm">+ {t('Add Track', 'Добавить трек')}</button>
             </div>
             <div className="space-y-3">
               {tracks.map((track, i) => (
@@ -217,7 +217,31 @@ function ReleaseForm({ release, artists, onSave, onCancel, t, lang }: any) {
           </div>
           <div>
             <label className="block text-sm font-medium text-purple-200/80 mb-2">UPC</label>
-            <input type="text" value={upc} onChange={e => setUpc(e.target.value)} className="cosmic-input" />
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={upc} 
+                onChange={e => setUpc(e.target.value)} 
+                className="flex-1 cosmic-input" 
+                placeholder={upc ? t('Assigned', 'Присвоен') : ''}
+              />
+              {!upc && (
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const newUPC = '0' + Math.floor(Math.random() * 100000000000).toString().padStart(11, '0');
+                    setUpc(newUPC);
+                    toast.success(t('UPC assigned', 'UPC присвоен') + ': ' + newUPC);
+                  }}
+                  className="cosmic-btn text-sm"
+                >
+                  {t('Assign', 'Присвоить')}
+                </button>
+              )}
+            </div>
+            {upc && (
+              <p className="text-xs text-green-400/70 mt-1">✓ {t('UPC assigned', 'UPC присвоен')}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-purple-200/80 mb-2">{t('Copyright (C-line)', 'Авторское право (C-line)')}</label>
@@ -272,9 +296,9 @@ function ReleaseForm({ release, artists, onSave, onCancel, t, lang }: any) {
       )}
 
       <div className="flex gap-3 pt-4 sticky bottom-0 bg-space-900/95 backdrop-blur-sm py-3">
-        {step > 1 && <button onClick={() => setStep(step - 1)} className="cosmic-btn cosmic-btn-ghost flex-1">{t('Back', 'Назад')}</button>}
-        {step < 4 ? <button onClick={() => setStep(step + 1)} className="cosmic-btn cosmic-btn-primary flex-1">{t('Next', 'Далее')}</button> : <button onClick={handleSubmit} className="cosmic-btn cosmic-btn-primary flex-1">{t('Save', 'Сохранить')}</button>}
-        <button onClick={onCancel} className="cosmic-btn cosmic-btn-ghost flex-1">{t('Cancel', 'Отмена')}</button>
+        {step > 1 && <button type="button" onClick={() => setStep(step - 1)} className="cosmic-btn cosmic-btn-ghost flex-1">{t('Back', 'Назад')}</button>}
+        {step < 4 ? <button type="button" onClick={() => setStep(step + 1)} className="cosmic-btn cosmic-btn-primary flex-1">{t('Next', 'Далее')}</button> : <button type="button" onClick={handleSubmit} className="cosmic-btn cosmic-btn-primary flex-1">{t('Save', 'Сохранить')}</button>}
+        <button type="button" onClick={onCancel} className="cosmic-btn cosmic-btn-ghost flex-1">{t('Cancel', 'Отмена')}</button>
       </div>
     </div>
   );
@@ -282,6 +306,7 @@ function ReleaseForm({ release, artists, onSave, onCancel, t, lang }: any) {
 
 function TrackEditor({ track, index, onUpdate, onRemove, t }: { track: Track; index: number; onUpdate: (data: Partial<Track>) => void; onRemove: () => void; t: (en: string, ru: string) => string }) {
   const [expanded, setExpanded] = useState(false);
+  const [showISRCConfirm, setShowISRCConfirm] = useState(false);
 
   const handleContentRatingChange = (key: keyof ContentRating) => {
     const currentValue = track.contentRating[key];
@@ -292,6 +317,15 @@ function TrackEditor({ track, index, onUpdate, onRemove, t }: { track: Track; in
         [key]: newValue 
       } 
     });
+  };
+
+  const handleAssignISRC = () => {
+    const newISRC = 'RU-' + Math.random().toString(36).substr(2, 7).toUpperCase() + '-' + new Date().getFullYear();
+    onUpdate({ 
+      isrc: newISRC, 
+      isrcAssigned: true 
+    });
+    setShowISRCConfirm(false);
   };
 
   return (
@@ -305,10 +339,10 @@ function TrackEditor({ track, index, onUpdate, onRemove, t }: { track: Track; in
           className="flex-1 cosmic-input py-2" 
           placeholder={t('Track title', 'Название трека')} 
         />
-        <button onClick={() => setExpanded(!expanded)} className="text-xs cosmic-btn py-1 px-2">
+        <button type="button" onClick={() => setExpanded(!expanded)} className="text-xs cosmic-btn py-1 px-2">
           {expanded ? '▲' : '▼'}
         </button>
-        <button onClick={onRemove} className="text-xs cosmic-btn cosmic-btn-ghost py-1 px-2 hover:!border-red-500/30 hover:!text-red-300">
+        <button type="button" onClick={onRemove} className="text-xs cosmic-btn cosmic-btn-ghost py-1 px-2 hover:!border-red-500/30 hover:!text-red-300">
           ✕
         </button>
       </div>
@@ -360,19 +394,21 @@ function TrackEditor({ track, index, onUpdate, onRemove, t }: { track: Track; in
                   value={track.isrc || ''} 
                   onChange={e => onUpdate({ isrc: e.target.value })} 
                   className="flex-1 cosmic-input py-1.5 text-sm" 
+                  placeholder={track.isrcAssigned ? t('Auto-assigned', 'Авто-присвоен') : ''}
                 />
                 {!track.isrc && (
                   <button 
-                    onClick={() => onUpdate({ 
-                      isrc: 'AUTO-' + Math.random().toString(36).substr(2, 8).toUpperCase(), 
-                      isrcAssigned: true 
-                    })} 
+                    type="button"
+                    onClick={() => setShowISRCConfirm(true)} 
                     className="cosmic-btn text-xs py-1 px-2"
                   >
                     {t('Assign', 'Присвоить')}
                   </button>
                 )}
               </div>
+              {track.isrcAssigned && (
+                <p className="text-xs text-green-400/70 mt-1">✓ {t('ISRC assigned', 'ISRC присвоен')}</p>
+              )}
             </div>
           </div>
 
@@ -539,6 +575,41 @@ function TrackEditor({ track, index, onUpdate, onRemove, t }: { track: Track; in
                 className="hidden" 
               />
             </label>
+          </div>
+        </div>
+      )}
+
+      {/* ISRC Confirmation Modal */}
+      {showISRCConfirm && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="glass-strong rounded-2xl p-6 w-full max-w-md animate-scale-in">
+            <h3 className="text-lg font-bold cosmic-text mb-4 flex items-center gap-2">
+              <span className="text-xl">🎵</span>
+              {t('Assign ISRC', 'Присвоить ISRC')}
+            </h3>
+            <p className="text-sm text-purple-200/70 mb-6">
+              {t('ISRC will be automatically generated and assigned to this track. This action cannot be undone.', 'ISRC будет автоматически сгенерирован и присвоен этому треку. Это действие нельзя отменить.')}
+            </p>
+            <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4 mb-6">
+              <p className="text-xs text-purple-300/60 mb-1">{t('Example format', 'Пример формата')}:</p>
+              <p className="text-sm text-white font-mono">RU-XXXXXXX-2026</p>
+            </div>
+            <div className="flex gap-3">
+              <button 
+                type="button"
+                onClick={() => setShowISRCConfirm(false)}
+                className="cosmic-btn cosmic-btn-ghost flex-1"
+              >
+                {t('Cancel', 'Отмена')}
+              </button>
+              <button 
+                type="button"
+                onClick={handleAssignISRC}
+                className="cosmic-btn cosmic-btn-primary flex-1"
+              >
+                {t('Assign', 'Присвоить')}
+              </button>
+            </div>
           </div>
         </div>
       )}
